@@ -12,7 +12,8 @@ const int height = 20;
 int x, y, fruitX, fruitY, score;
 enum eDirection {STOP = 0, LEFT, RIGHT, UP, DOWN};
 eDirection dir;
-
+int tailX[100], tailY[100]; //coordinates of a tail
+int ntail; 
 
 void Setup() {
 	GameOver = false;
@@ -49,7 +50,20 @@ void Draw() {
 			
 			else
 			{
-				cout << " ";
+				bool print = false;
+				for (int k = 0; k < ntail; k++)
+				{
+					if (tailX[k] == j && tailY[k] == i)
+					{
+						print = true;
+						cout << "o";
+					}
+				}
+				if (!print)
+				{
+					cout << " ";
+				}
+				
 			}
 		}
 		cout << endl;
@@ -89,7 +103,23 @@ void Input() {
 
 void Logic() {
 
-	switch (dir)
+	int prevX = tailX[0];
+	int prevY = tailY[0];
+	int prev2X, prev2Y;
+	tailX[0] = x;
+	tailY[0] = y;
+
+	for (int i = 1; i < ntail; i++)
+	{
+		prev2X = tailX[i];
+		prev2Y = tailY[i];
+		tailX[i] = prevX;
+		tailY[i] = prevY;
+		prevX = prev2X;
+		prevY = prev2Y;
+	}
+
+	switch (dir)    //Controls
 	{
 	case LEFT:
 		x--;
@@ -105,16 +135,29 @@ void Logic() {
 		break;
 	}
 
-	if (x>width||x<0||y>height||y<0)
+	//if (x>width||x<0||y>height||y<0) // Game field borders
+	//{
+	//	GameOver = true;
+	//}
+
+	for (int i = 0; i < ntail; i++)
 	{
-		GameOver = true;
+		if (tailX[i] == x && tailY[i] == y)
+			GameOver = true;
 	}
 
-	if (x==fruitX&&y==fruitY)
+	if (x >= width-1) x = 0;			//Collision
+	else if (x < 0) x = width - 2;
+
+	if (y >= height-1) y = 0;			//Collosion
+	else if (y < 0) y = height - 2;
+
+	if (x==fruitX&&y==fruitY) //score 
 	{
 		score += 10;
 		fruitX = rand() % width;
 		fruitY = rand() % height;
+		ntail++;
 	}
 
 }
