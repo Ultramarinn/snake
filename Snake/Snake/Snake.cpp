@@ -58,6 +58,7 @@ void Draw() {
 	for (int i = 0; i < width+1; i++) cout << "#";
 
 	cout << endl;
+	cout << "Score is " << score << endl;
 }
 
 void Input() {
@@ -88,9 +89,33 @@ void Input() {
 
 void Logic() {
 
+	switch (dir)
+	{
+	case LEFT:
+		x--;
+		break;
+	case RIGHT:
+		x++;
+		break;
+	case UP:
+		y--;
+		break;
+	case DOWN:
+		y++;
+		break;
+	}
 
+	if (x>width||x<0||y>height||y<0)
+	{
+		GameOver = true;
+	}
 
-
+	if (x==fruitX&&y==fruitY)
+	{
+		score += 10;
+		fruitX = rand() % width;
+		fruitY = rand() % height;
+	}
 
 }
 
